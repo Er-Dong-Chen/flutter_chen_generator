@@ -1,0 +1,22 @@
+name: flutter_chen_generator
+description: A comprehensive Flutter code generation toolkit for assets, icons and more.
+version: 1.0.0
+homepage: https://github.com/Er-Dong-Chen/flutter_chen_generator
+
+environment:
+  sdk: '>=2.17.0 <4.0.0'
+
+executables:
+  flutter_chen_generator: flutter_chen_generator           # 主入口
+  flutter_chen_assets: flutter_chen_assets_generator       # 资源生成器
+
+topics:
+  - code-generation
+  - tools
+  - cli
+  - generator
+  - assets
+
+dev_dependencies:
+  test: ^1.21.0
+  lints: ^2.0.0
