@@ -3,7 +3,6 @@
 import 'dart:io';
 
 import '../lib/src/assets/assets_generator.dart' as assets_generator;
-import '../lib/src/iconfont/iconfont_generator.dart' as iconfont_generator;
 
 void main(List<String> arguments) async {
   print('🚀 Flutter Chen Generator v1.0.0');
@@ -21,10 +20,6 @@ void main(List<String> arguments) async {
     switch (command) {
       case 'assets':
         await assets_generator.main(subArgs);
-        break;
-
-      case 'iconfont':
-        await iconfont_generator.main(subArgs);
         break;
 
       case 'help':
