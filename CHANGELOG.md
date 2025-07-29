@@ -1,3 +1,7 @@
+## 1.1.0
+
+* TODO: Added iconFont Generator.
+* 
 ## 1.0.1
 
 * TODO: Remove unused code and added example

@@ -2,22 +2,40 @@
 
 import 'dart:io';
 
+/// Flutter 资源文件生成器
+///
+/// 自动扫描指定目录下的所有资源文件，生成对应的 Dart 常量文件
+/// 并可选择性地自动更新 pubspec.yaml 文件中的 assets 配置
 class FlutterAssetsGenerator {
   // 默认配置项
+
+  /// 资源文件所在的目录路径
   static String assetsDir = 'assets';
+
+  /// 输出的 Dart 文件路径
   static String outputFile = 'lib/generated/assets.dart';
+
+  /// 生成的类名
   static String className = 'Assets';
+
+  /// pubspec.yaml 文件路径
   static String pubspecFile = 'pubspec.yaml';
 
-  // 命名方式配置：true=简短命名(父级文件夹+文件名), false=完整路径命名
+  /// 命名方式配置
+  ///
+  /// true=简短命名(父级文件夹+文件名), false=完整路径命名
   static bool useShortNaming = true;
 
-  // 是否自动更新pubspec.yaml
+  /// 是否自动更新 pubspec.yaml 文件
   static bool autoUpdatePubspec = true;
 
-  // 需要忽略的文件夹列表
+  /// 需要忽略的文件夹列表
   static List<String> ignoredFolders = [];
 
+  /// 开始生成资源文件索引
+  ///
+  /// 扫描指定目录，收集所有资源文件，生成包含常量定义的 Dart 文件
+  /// 可选择性地自动更新 pubspec.yaml 中的 assets 配置
   static Future<void> generate() async {
     print('开始生成Flutter资源文件索引...');
 
@@ -62,6 +80,13 @@ class FlutterAssetsGenerator {
   }
 
   /// 递归收集资源文件
+  ///
+  /// 遍历指定目录及其子目录，收集所有资源文件的路径
+  /// 同时收集文件夹路径用于 pubspec.yaml 配置
+  ///
+  /// [dir] 要扫描的目录
+  /// [assetFiles] 收集到的资源文件路径列表
+  /// [assetFolders] 收集到的文件夹路径集合
   static Future<void> _collectAssets(
       Directory dir, List<String> assetFiles, Set<String> assetFolders) async {
     await for (final entity in dir.list()) {
@@ -91,6 +116,11 @@ class FlutterAssetsGenerator {
   }
 
   /// 检查是否应该忽略文件夹
+  ///
+  /// 根据配置的忽略列表判断指定路径是否应该被忽略
+  ///
+  /// [folderPath] 文件夹路径
+  /// 返回 true 表示应该忽略，false 表示不忽略
   static bool _shouldIgnoreFolder(String folderPath) {
     // 标准化路径分隔符
     final normalizedPath = folderPath.replaceAll('\\', '/');
@@ -113,7 +143,13 @@ class FlutterAssetsGenerator {
     return false;
   }
 
-  /// 生成Dart代码
+  /// 生成 Dart 代码
+  ///
+  /// 根据收集到的资源文件列表生成包含常量定义的完整 Dart 文件内容
+  /// 处理命名冲突并确保生成有效的常量名
+  ///
+  /// [assetFiles] 资源文件路径列表
+  /// 返回生成的 Dart 代码字符串
   static String _generateDartCode(List<String> assetFiles) {
     final buffer = StringBuffer();
 
@@ -180,6 +216,12 @@ class FlutterAssetsGenerator {
   }
 
   /// 根据文件路径生成常量名称
+  ///
+  /// 支持两种命名方式：简短命名和完整路径命名
+  /// 生成符合 Dart 变量命名规范的常量名
+  ///
+  /// [assetPath] 资源文件的完整路径
+  /// 返回生成的常量名称
   static String _generateConstantName(String assetPath) {
     // 移除assets/前缀
     String path = assetPath;
@@ -265,6 +307,12 @@ class FlutterAssetsGenerator {
   }
 
   /// 智能处理驼峰命名的单词
+  ///
+  /// 识别并保持已有的驼峰格式，或根据需要转换为驼峰格式
+  ///
+  /// [word] 要处理的单词
+  /// [capitalize] 是否将首字母大写
+  /// 返回处理后的单词
   static String _toCamelCaseWord(String word, bool capitalize) {
     if (word.isEmpty) return word;
 
@@ -291,6 +339,9 @@ class FlutterAssetsGenerator {
   }
 
   /// 获取文件扩展名（不含点号）
+  ///
+  /// [filePath] 文件路径
+  /// 返回小写的文件扩展名，如果没有扩展名则返回空字符串
   static String _getFileExtension(String filePath) {
     final lastDotIndex = filePath.lastIndexOf('.');
     if (lastDotIndex != -1 && lastDotIndex < filePath.length - 1) {
@@ -300,12 +351,20 @@ class FlutterAssetsGenerator {
   }
 
   /// 首字母大写
+  ///
+  /// [text] 要处理的文本
+  /// 返回首字母大写的文本
   static String _capitalizeFirst(String text) {
     if (text.isEmpty) return text;
     return text[0].toUpperCase() + text.substring(1);
   }
 
-  /// 更新pubspec.yaml文件的assets配置
+  /// 更新 pubspec.yaml 文件的 assets 配置
+  ///
+  /// 自动在 pubspec.yaml 中添加或更新 assets 配置
+  /// 合并现有配置和新发现的资源文件夹
+  ///
+  /// [assetFolders] 需要添加到配置中的资源文件夹集合
   static Future<void> _updatePubspecYaml(Set<String> assetFolders) async {
     final pubspecFileObj = File(pubspecFile);
 
@@ -422,6 +481,11 @@ class FlutterAssetsGenerator {
 }
 
 /// 解析命令行参数
+///
+/// 处理用户提供的命令行选项，设置相应的配置参数
+///
+/// [arguments] 命令行参数列表
+/// 返回 true 表示应该退出程序（如显示帮助信息），false 表示继续执行
 bool _parseArguments(List<String> arguments) {
   for (int i = 0; i < arguments.length; i++) {
     final arg = arguments[i];
@@ -511,6 +575,8 @@ bool _parseArguments(List<String> arguments) {
 }
 
 /// 打印帮助信息
+///
+/// 在控制台输出详细的使用说明和参数说明
 void _printHelp() {
   print('''
 Flutter Chen Assets Generator - 自动生成Flutter资源文件索引
@@ -553,9 +619,13 @@ Flutter Chen Assets Generator - 自动生成Flutter资源文件索引
 ''');
 }
 
-/// 主函数
+/// 主函数 - 程序入口点
+///
+/// 解析命令行参数并执行资源文件生成任务
+///
+/// [arguments] 命令行参数列表
 Future<void> main(List<String> arguments) async {
-  print('🚀 Flutter Chen Assets Generator v1.0.0');
+  print('🚀 Flutter Chen Assets Generator');
   print('═' * 50);
 
   // 解析命令行参数

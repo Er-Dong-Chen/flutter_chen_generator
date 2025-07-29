@@ -2,10 +2,13 @@
 
 import 'dart:io';
 
-import '../lib/src/assets/assets_generator.dart' as assets_generator;
+import 'package:flutter_chen_generator/src/assets/assets_generator.dart'
+    as assets_generator;
+import 'package:flutter_chen_generator/src/iconfont/iconfont_generator.dart'
+    as iconfont_generator;
 
 void main(List<String> arguments) async {
-  print('🚀 Flutter Chen Generator v1.0.0');
+  print('🚀 Flutter Chen Generator');
   print('═' * 50);
 
   if (arguments.isEmpty) {
@@ -22,6 +25,10 @@ void main(List<String> arguments) async {
         await assets_generator.main(subArgs);
         break;
 
+      case 'iconfont':
+        await iconfont_generator.main(subArgs);
+        break;
+
       case 'help':
       case '--help':
       case '-h':
@@ -31,7 +38,7 @@ void main(List<String> arguments) async {
       case 'version':
       case '--version':
       case '-v':
-        print('Flutter Chen Generator v1.0.0');
+        print('Flutter Chen Generator');
         break;
 
       default:
